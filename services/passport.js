@@ -27,7 +27,9 @@ passport.use (new GoogleStrategy({
     clientID: keys.googleClientID,
     clientSecret: keys.googleClientSecret,
     //callback url
-    callbackURL:'/auth/google/callback'
+    callbackURL:'/auth/google/callback',
+    // add so google strategy trusts proxy
+    proxy:true
  },
     (accessToken, refreshToken, profile, done) => {
         // Find user with profile Id asynchronously (using promises)
