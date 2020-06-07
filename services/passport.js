@@ -31,22 +31,22 @@ passport.use (new GoogleStrategy({
     // add so google strategy trusts proxy
     proxy:true
  },
-    (accessToken, refreshToken, profile, done) => {
+    async (accessToken, refreshToken, profile, done) => {
         // Find user with profile Id asynchronously (using promises)
-        User.findOne({googleId: profile.id}).then ((existingUser) => {
-                //Check if user exists already and only add if not
-                if (existingUser) {
-                    // record exists
-                    //nothing to do, passes back existingUser
-                    done(null, existingUser);
+       const existingUser = await User.findOne({googleId: profile.id})
 
-                } else {
-                    //Create new user and save
-                    new User ({googleId: profile.id}).save()
-                    //need to chain promise to make user has been created - getting back user from DB and passing back to passport
-                    .then(user => done(null,user));
-                }
-            })
+        //Check if user exists already and only add if not
+        if (existingUser) {
+            // record exists
+            //nothing to do, passes back existingUser
+            done(null, existingUser);
+
+        } else {
+            //Create new user and save
+            const user = await new User ({googleId: profile.id}).save()
+            //need to chain promise to make user has been created - getting back user from DB and passing back to passport
+            done(null,user);
+        }
 
 
     }
